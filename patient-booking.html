@@ -53,8 +53,9 @@
     </nav>
 
     <script>
-        const supabaseUrl = 'YOUR_SUPABASE_URL'; // ❗ استبدل
-        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // ❗ استبدل
+        // --- Your Supabase Credentials ---
+        const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
