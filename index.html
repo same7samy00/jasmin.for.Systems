@@ -9,16 +9,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
         :root {
-            --primary-color: #007bff; /* A more standard professional blue */
+            --primary-color: #007bff; /* Standard professional blue */
             --primary-dark: #0056b3;
-            --secondary-color: #6c757d; /* A subtle grey for secondary text */
-            --background-light: #f8f9fa; /* Lighter background */
+            --primary-light: #e6f2ff; /* Light shade of primary */
+            --secondary-color: #6c757d; /* Subtle grey for secondary text */
+            --background-light: #f8f9fa;
             --background-gradient-start: #e0f2fe;
             --background-gradient-end: #ffffff;
             --card-background: #ffffff;
             --border-color: #dee2e6;
             --shadow-light: rgba(0, 0, 0, 0.05);
             --shadow-medium: rgba(0, 0, 0, 0.1);
+            --gradient-blue-light: linear-gradient(145deg, #e0f2ff, #cce0ff);
+            --gradient-green-light: linear-gradient(145deg, #e6ffe6, #cce0cc);
+            --gradient-orange-light: linear-gradient(145deg, #fff0e6, #ffe0cc);
+            --gradient-purple-light: linear-gradient(145deg, #f0e6ff, #e0ccff);
         }
 
         * {
@@ -30,8 +35,9 @@
 
         body {
             background: linear-gradient(to bottom, var(--background-gradient-start), var(--background-gradient-end));
-            color: #333; /* Darker text for better readability */
-            padding-bottom: 90px; /* Increased for better nav spacing */
+            color: #333;
+            padding-top: 100px; /* Increased padding-top to prevent header overlap */
+            padding-bottom: 90px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -40,64 +46,75 @@
         header {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
-            padding: 40px 20px 30px; /* More vertical padding */
+            padding: 40px 20px 30px;
             text-align: center;
-            font-size: 26px; /* Slightly larger font */
-            font-weight: 700; /* Bolder for prominence */
+            font-size: 26px;
+            font-weight: 700;
             box-shadow: 0 4px 15px var(--shadow-medium);
-            border-bottom-left-radius: 25px; /* More pronounced radius */
+            border-bottom-left-radius: 25px;
             border-bottom-right-radius: 25px;
             animation: slideDown 0.7s ease-out;
-            position: relative; /* For potential future elements */
-            z-index: 10;
+            position: fixed; /* Make header fixed */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 20; /* Higher z-index for fixed header */
         }
 
         .stats {
-            margin-top: -30px; /* Overlap with header slightly for modern look */
+            margin-top: 20px; /* Adjusted margin-top for content below fixed header */
             padding: 0 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Slightly larger min-width */
-            gap: 20px; /* Increased gap */
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
             position: relative;
             z-index: 5;
-            animation: fadeIn 1.2s ease-in-out forwards; /* Ensures animation stays */
-            max-width: 1200px; /* Max width for larger screens */
+            animation: fadeIn 1.2s ease-in-out forwards;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
         }
 
         .card {
             background: var(--card-background);
-            border-radius: 18px; /* Softer corners */
-            padding: 30px; /* More padding */
+            border-radius: 18px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 10px 30px var(--shadow-light); /* More prominent but soft shadow */
+            box-shadow: 0 10px 30px var(--shadow-light);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
-            border: 1px solid var(--border-color); /* Subtle border */
+            border: 1px solid var(--border-color);
+            /* Default background for cards, can be overridden by specific classes */
         }
 
+        .card.patients { background: var(--gradient-blue-light); }
+        .card.appointments { background: var(--gradient-green-light); }
+        .card.completed { background: var(--gradient-purple-light); }
+        .card.doctors { background: var(--gradient-orange-light); }
+        .card.pending { background: var(--gradient-orange-light); }
+        .card.revenue { background: var(--gradient-green-light); }
+
         .card:hover {
-            transform: translateY(-8px); /* More pronounced lift */
-            box-shadow: 0 16px 36px var(--shadow-medium); /* Darker shadow on hover */
+            transform: translateY(-8px);
+            box-shadow: 0 16px 36px var(--shadow-medium);
         }
 
         .card h3 {
             font-size: 17px;
             margin-bottom: 12px;
-            color: var(--secondary-color); /* Subtle color for headings */
+            color: var(--secondary-color);
             font-weight: 600;
         }
 
         .card p {
-            font-size: 32px; /* Larger numbers */
+            font-size: 32px;
             font-weight: 700;
-            color: var(--primary-dark); /* Darker primary color for numbers */
+            color: var(--primary-dark);
             margin-bottom: 5px;
         }
 
         .card small {
             display: block;
-            margin-top: 8px; /* More spacing */
+            margin-top: 8px;
             font-size: 13px;
             color: var(--secondary-color);
             opacity: 0.8;
@@ -115,8 +132,8 @@
             border-top: 1px solid var(--border-color);
             box-shadow: 0 -4px 20px var(--shadow-light);
             z-index: 1000;
-            height: 80px; /* Taller navigation */
-            border-top-left-radius: 20px; /* Softer radius */
+            height: 80px;
+            border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             padding: 0 10px;
         }
@@ -127,7 +144,7 @@
             align-items: center;
             justify-content: center;
             flex: 1;
-            padding: 10px 0; /* More padding */
+            padding: 10px 0;
             color: var(--secondary-color);
             text-decoration: none;
             font-size: 13px;
@@ -138,7 +155,7 @@
         nav a::after {
             content: '';
             position: absolute;
-            bottom: 5px; /* Position line slightly above bottom */
+            bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
@@ -153,17 +170,17 @@
         }
 
         nav a.active::after {
-            width: 70%; /* Active line width */
+            width: 70%;
         }
 
         nav a i {
-            font-size: 22px; /* Slightly larger icons */
-            margin-bottom: 6px; /* More space between icon and text */
+            font-size: 22px;
+            margin-bottom: 6px;
             transition: transform 0.3s ease;
         }
 
         nav a:hover i {
-            transform: translateY(-2px); /* Subtle bounce on hover */
+            transform: translateY(-2px);
         }
 
         @keyframes fadeIn {
@@ -178,12 +195,15 @@
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
+            body {
+                padding-top: 80px; /* Adjust padding for smaller screens */
+            }
             header {
                 font-size: 22px;
                 padding: 30px 15px 25px;
             }
             .stats {
-                grid-template-columns: 1fr 1fr; /* Two columns on smaller screens */
+                grid-template-columns: 1fr 1fr;
                 gap: 15px;
                 padding: 0 15px;
             }
@@ -211,42 +231,55 @@
     <header id="clinicName">عيادة الحياة</header>
 
     <section class="stats">
-        <div class="card">
-            <h3>عدد المرضى</h3>
-            <p id="patientCount">0</p>
-            <small>تمت إضافتهم هذا الشهر</small>
+        <div class="card patients">
+            <h3>إجمالي المرضى</h3>
+            <p id="totalPatientCount">0</p>
+            <small>في جميع الأوقات</small>
         </div>
-        <div class="card">
-            <h3>عدد المواعيد</h3>
-            <p id="appointmentCount">0</p>
-            <small>نشطة هذا الأسبوع</small>
+        <div class="card appointments">
+            <h3>المواعيد النشطة</h3>
+            <p id="activeAppointmentCount">0</p>
+            <small>خلال الأسبوع الحالي</small>
         </div>
-        <div class="card">
+        <div class="card completed">
             <h3>الحجوزات المكتملة</h3>
             <p id="completedAppointments">0</p>
-            <small>تمت معالجتهم</small>
+            <small>لهذا الشهر</small>
         </div>
-        <div class="card">
+        <div class="card doctors">
             <h3>عدد الأطباء</h3>
             <p id="doctorsCount">0</p>
-            <small>متاحين حالياً</small>
+            <small>المتاحون حالياً</small>
+        </div>
+        <div class="card pending">
+            <h3>مواعيد معلقة</h3>
+            <p id="pendingAppointments">0</p>
+            <small>بانتظار التأكيد</small>
+        </div>
+        <div class="card revenue">
+            <h3>إجمالي الإيرادات</h3>
+            <p id="totalRevenue">0</p>
+            <small>لهذا الشهر ($)</small>
         </div>
     </section>
 
     <nav>
-        <a href="#" class="active">
+        <a href="index.html" class="active">
             <i class="fas fa-home"></i>
             الرئيسية
         </a>
-        <a href="#">
+        <a href="new-patient.html">
             <i class="fas fa-user-plus"></i>
             مريض جديد
         </a>
-        <a href="#">
+        <a href="patients.html">
             <i class="fas fa-users"></i>
             المرضى
         </a>
-        <a href="#">
+        <a href="appointments.html">
+            <i class="far fa-calendar-alt"></i> المواعيد
+        </a>
+        <a href="settings.html">
             <i class="fas fa-cog"></i>
             الإعدادات
         </a>
@@ -258,15 +291,65 @@
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         async function loadStats() {
-            const { data: patients } = await supabase.from('patients').select('*');
-            const { data: appointments } = await supabase.from('appointments').select('*');
-            const { data: completed } = await supabase.from('appointments').select('status').eq('status', 'مكتملة');
-            const { data: doctors } = await supabase.from('doctors').select('*');
+            // Get current month and week for filtering
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
-            document.getElementById('patientCount').textContent = patients?.length || 0;
-            document.getElementById('appointmentCount').textContent = appointments?.length || 0;
-            document.getElementById('completedAppointments').textContent = completed?.length || 0;
+            // Calculate start and end of current week (assuming week starts on Sunday)
+            const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+            const diffToSunday = now.getDate() - dayOfWeek;
+            const startOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday).toISOString();
+            const endOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday + 6, 23, 59, 59).toISOString();
+
+
+            // Fetching all patients for total count
+            const { data: totalPatients, error: totalPatientsError } = await supabase.from('patients').select('id');
+            if (totalPatientsError) console.error('Error fetching total patients:', totalPatientsError.message);
+
+            // Fetching appointments for current week
+            const { data: activeAppointments, error: activeAppointmentsError } = await supabase.from('appointments').select('id, status')
+                .gte('appointment_date', startOfWeek)
+                .lte('appointment_date', endOfWeek)
+                .in('status', ['مؤكدة', 'قيد الانتظار']); // Assuming statuses like 'confirmed' or 'pending' for active
+
+            if (activeAppointmentsError) console.error('Error fetching active appointments:', activeAppointmentsError.message);
+
+            // Fetching completed appointments for current month
+            const { data: completedAppointments, error: completedAppointmentsError } = await supabase.from('appointments').select('id')
+                .eq('status', 'مكتملة')
+                .gte('appointment_date', startOfMonth)
+                .lte('appointment_date', endOfMonth);
+            if (completedAppointmentsError) console.error('Error fetching completed appointments:', completedAppointmentsError.message);
+
+            // Fetching pending appointments
+            const { data: pendingAppointments, error: pendingAppointmentsError } = await supabase.from('appointments').select('id').eq('status', 'قيد الانتظار');
+            if (pendingAppointmentsError) console.error('Error fetching pending appointments:', pendingAppointmentsError.message);
+
+            // Fetching doctors count
+            const { data: doctors, error: doctorsError } = await supabase.from('doctors').select('id');
+            if (doctorsError) console.error('Error fetching doctors:', doctorsError.message);
+
+            // Fetching revenue (assuming a 'transactions' table with a 'amount' column and 'created_at' for date)
+            // This is a placeholder; you'll need to adjust table/column names based on your actual Supabase schema
+            const { data: transactions, error: transactionsError } = await supabase.from('transactions').select('amount')
+                .gte('created_at', startOfMonth)
+                .lte('created_at', endOfMonth);
+            if (transactionsError) console.error('Error fetching transactions:', transactionsError.message);
+
+            let totalRevenue = 0;
+            if (transactions) {
+                totalRevenue = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
+            }
+
+
+            // Update DOM elements
+            document.getElementById('totalPatientCount').textContent = totalPatients?.length || 0;
+            document.getElementById('activeAppointmentCount').textContent = activeAppointments?.length || 0;
+            document.getElementById('completedAppointments').textContent = completedAppointments?.length || 0;
+            document.getElementById('pendingAppointments').textContent = pendingAppointments?.length || 0;
             document.getElementById('doctorsCount').textContent = doctors?.length || 0;
+            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2); // Format as currency
         }
 
         loadStats();
