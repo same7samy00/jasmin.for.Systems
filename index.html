@@ -18,19 +18,31 @@
             --primary-gradient-end: #3f7de0; /* Gradient end for header/cards */
             --text-color-dark: #333333; /* Dark text for headings */
             --text-color-light: #888888; /* Lighter text for descriptions/small */
-            --shadow-color-soft: rgba(0, 0, 0, 0.08); /* Soft shadow */
-            --shadow-color-medium: rgba(0, 0, 0, 0.15); /* Medium shadow for hover */
+            
+            /* Enhanced Shadow for cards (soft, spreads more) */
+            --card-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); 
+            --card-hover-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+
+            --header-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Keep header shadow strong */
+            --nav-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08); /* Soft shadow from bottom */
+
             --border-color-subtle: #e0e6ed; /* Subtle border for cards */
 
-            /* New nav colors */
+            /* Nav colors */
             --nav-bg: #ffffff;
             --nav-item-color: #929292;
             --nav-active-color: var(--primary-blue-light);
             --nav-active-bg: #e6f0ff; /* Very light blue for active item background */
+
+            /* New Card Gradients (professional, subtle) */
+            --gradient-card-blue: linear-gradient(145deg, #e0f2fe, #cbe3fa); /* For Patients */
+            --gradient-card-green: linear-gradient(145deg, #e7ffe0, #d4f8cb); /* For Appointments/Revenue */
+            --gradient-card-purple: linear-gradient(145deg, #f0e6ff, #e0ccff); /* For Completed */
+            --gradient-card-orange: linear-gradient(145deg, #fff0e6, #ffe0cc); /* For Doctors/Pending */
         }
 
         * {
-            font-family: 'Tajawal', sans-serif; /* Changed font family to Tajawal */
+            font-family: 'Tajawal', sans-serif;
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -39,8 +51,8 @@
         body {
             background-color: var(--main-bg-color);
             color: var(--text-color-dark);
-            height: 100vh; /* Make body take full viewport height */
-            overflow: hidden; /* Prevent body scrolling */
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
@@ -52,28 +64,28 @@
             text-align: center;
             font-size: 22px;
             font-weight: 700;
-            box-shadow: 0 8px 25px var(--shadow-color-medium);
+            box-shadow: var(--header-shadow); /* Reusing header shadow variable */
             border-bottom-left-radius: 35px;
             border-bottom-right-radius: 35px;
             animation: slideDown 0.7s ease-out;
-            position: fixed; /* Header fixed at the top */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 100; /* High z-index to always be on top */
+            z-index: 100;
         }
 
         .main-content-wrapper {
-            flex-grow: 1; /* Allows it to take available space */
+            flex-grow: 1;
             padding-top: 90px; /* Space for the fixed header */
             padding-bottom: 90px; /* Space for the fixed nav */
-            overflow-y: auto; /* Enable vertical scrolling within this div */
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .stats {
-            margin-top: 25px; /* Space below header (within scrollable area) */
-            margin-bottom: 25px; /* Space above nav (within scrollable area) */
+            margin-top: 25px;
+            margin-bottom: 25px;
             padding: 0 20px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -84,27 +96,36 @@
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
-            overflow: hidden; /* Prevent internal scroll for the grid itself */
+            overflow: hidden;
         }
 
         .card {
-            background: var(--card-bg-color);
+            background: var(--card-bg-color); /* Default, overridden by specific gradients */
             border-radius: 25px;
             padding: 30px;
             text-align: center;
-            box-shadow: 0 12px 30px var(--shadow-color-soft);
+            box-shadow: var(--card-shadow); /* Applied refined card shadow */
             transition: transform 0.4s ease, box-shadow 0.4s ease;
             border: 1px solid var(--border-color-subtle);
-            overflow: hidden; /* Prevent internal scrolling for cards */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%; /* Ensure cards take up full height in their grid cell */
+            height: 100%;
         }
+
+        /* Applying new card gradients */
+        .card.patients { background: var(--gradient-card-blue); }
+        .card.appointments { background: var(--gradient-card-green); }
+        .card.completed { background: var(--gradient-card-purple); }
+        .card.doctors { background: var(--gradient-card-orange); }
+        .card.pending { background: var(--gradient-card-orange); } /* Re-using orange */
+        .card.revenue { background: var(--gradient-card-green); } /* Re-using green */
+
 
         .card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 18px 40px var(--shadow-color-medium);
+            box-shadow: var(--card-hover-shadow); /* Applied refined hover shadow */
         }
 
         .card h3 {
@@ -117,7 +138,7 @@
         .card p {
             font-size: 34px;
             font-weight: 700;
-            color: var(--primary-blue-light);
+            color: var(--primary-blue-dark); /* Using dark blue for numbers for better contrast */
             margin-bottom: 5px;
         }
 
@@ -129,7 +150,7 @@
             opacity: 0.9;
         }
 
-        /* New Navigation Bar Style */
+        /* Navigation Bar Style */
         nav {
             position: fixed;
             bottom: 0;
@@ -139,7 +160,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 -8px 30px var(--shadow-color-soft);
+            box-shadow: var(--nav-shadow);
             z-index: 1000;
             height: 90px;
             border-top-left-radius: 40px;
@@ -153,43 +174,40 @@
             align-items: center;
             justify-content: center;
             flex: 1;
-            height: 100%; /* Ensure full height for clickable area */
+            height: 100%;
             color: var(--nav-item-color);
             text-decoration: none;
             font-size: 13px;
             transition: all 0.3s ease;
             position: relative;
-            border: none; /* No borders */
-            gap: 5px; /* Space between icon and text */
-            padding-top: 15px; /* Adjust padding for visual balance */
+            border: none;
+            gap: 5px;
+            padding-top: 15px;
             padding-bottom: 5px;
         }
 
-        /* Active state for new nav style */
         nav a.active {
             color: var(--nav-active-color);
         }
 
         nav a i {
-            font-size: 24px; /* Slightly smaller icons for a refined look */
+            font-size: 24px;
             transition: color 0.3s ease;
         }
 
         nav a.active i {
-            /* Create a circular background for the active icon */
             background-color: var(--nav-active-bg);
-            border-radius: 50%; /* Makes it circular */
-            padding: 10px; /* Padding inside the circle */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for the circle */
-            transform: translateY(-5px); /* Lift icon slightly */
-            color: var(--nav-active-color); /* Active icon color */
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            color: var(--nav-active-color);
         }
         
         nav a:not(.active) i:hover {
-            color: var(--primary-blue-light); /* Hover effect for inactive icons */
+            color: var(--primary-blue-light);
         }
 
-        /* Hide the line for the new nav style */
         nav a::after {
             display: none;
         }
@@ -207,16 +225,16 @@
         /* Responsive adjustments */
         @media (max-width: 600px) {
             body {
-                padding-top: 75px; /* Adjusted padding-top for smaller header on mobile */
-                padding-bottom: 80px; /* Space for mobile nav */
+                padding-top: 75px;
+                padding-bottom: 80px;
             }
             header {
                 font-size: 20px;
                 padding: 20px 15px;
             }
             .main-content-wrapper {
-                padding-top: 75px; /* Adjusted for mobile header */
-                padding-bottom: 80px; /* Adjusted for mobile nav */
+                padding-top: 75px;
+                padding-bottom: 80px;
             }
             .stats {
                 grid-template-columns: 1fr 1fr;
@@ -246,18 +264,16 @@
             }
             nav a i {
                 font-size: 20px;
-                padding: 8px; /* Smaller padding for mobile active circle */
+                padding: 8px;
             }
             nav a.active i {
-                transform: translateY(-3px); /* Less lift on mobile */
+                transform: translateY(-3px);
             }
         }
     </style>
 </head>
 <body>
-    <header id="clinicName">مرحباً جينيفر!</header>
-
-    <div class="main-content-wrapper">
+    <header id="clinicName">عيادة الحياة</header> <div class="main-content-wrapper">
         <section class="stats">
             <div class="card patients">
                 <h3>إجمالي المرضى</h3>
@@ -290,26 +306,23 @@
                 <small>لهذا الشهر ($)</small>
             </div>
         </section>
-    </div> <nav>
+    </div>
+
+    <nav>
         <a href="index.html" class="active">
-            <i class="fas fa-home"></i>
-            الرئيسية
+            <i class="fas fa-home"></i> الرئيسية
         </a>
         <a href="new-patient.html">
-            <i class="fas fa-user-plus"></i>
-            مريض جديد
+            <i class="fas fa-user-plus"></i> مريض جديد
         </a>
         <a href="patients.html">
-            <i class="fas fa-users"></i>
-            المرضى
+            <i class="fas fa-users"></i> المرضى
         </a>
         <a href="appointments.html">
-            <i class="far fa-calendar-alt"></i>
-            المواعيد
+            <i class="far fa-calendar-alt"></i> المواعيد
         </a>
         <a href="settings.html">
-            <i class="fas fa-cog"></i>
-            الإعدادات
+            <i class="fas fa-cog"></i> الإعدادات
         </a>
     </nav>
 
@@ -317,6 +330,23 @@
         const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Function to load clinic name from settings table
+        async function loadClinicName() {
+            const { data, error } = await supabase
+                .from('clinic_settings') // Assuming your table for settings is 'clinic_settings'
+                .select('clinic_name')
+                .single(); // Assuming there's only one row for general settings
+
+            if (error) {
+                console.error('Error fetching clinic name:', error.message);
+                document.getElementById('clinicName').textContent = 'عيادتي'; // Fallback name
+            } else if (data) {
+                document.getElementById('clinicName').textContent = data.clinic_name || 'عيادتي';
+            } else {
+                document.getElementById('clinicName').textContent = 'عيادتي'; // Fallback if no data
+            }
+        }
 
         async function loadStats() {
             const now = new Date();
@@ -328,6 +358,7 @@
             const startOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday).toISOString();
             const endOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday + 6, 23, 59, 59).toISOString();
 
+            // All stats fetching confirmed to be from Supabase
             const { data: totalPatients, error: totalPatientsError } = await supabase.from('patients').select('id');
             if (totalPatientsError) console.error('Error fetching total patients:', totalPatientsError.message);
 
@@ -368,6 +399,8 @@
             document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2);
         }
 
+        // Call both functions on load
+        loadClinicName();
         loadStats();
     </script>
 </body>
