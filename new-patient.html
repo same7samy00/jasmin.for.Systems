@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مريض جديد - عيادتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        :root {
+            --main-bg-color: #f0f4f8;
+            --card-bg-color: #ffffff;
+            --primary-blue-dark: #2c3e50;
+            --primary-blue-accent: #4a90e2;
+            --text-color-dark: #333333;
+            --text-color-light: #888888;
+            --border-color: #e0e6ed;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --card-shadow: 0 10px 30px rgba(44, 62, 80, 0.12);
+            --nav-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            font-family: 'Tajawal', sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--main-bg-color);
+            color: var(--text-color-dark);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1;
+            padding: 20px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue-dark);
+        }
+
+        .form-container {
+            background-color: var(--card-bg-color);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-blue-dark);
+            font-size: 16px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: var(--text-color-light);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            padding-left: 40px; /* Space for icon */
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue-accent);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background-color: var(--primary-blue-dark);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #34495e;
+            transform: translateY(-2px);
+        }
+        
+        #form-message {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+            display: none; /* Hidden by default */
+        }
+        
+        #form-message.success {
+            background-color: #eafaf1;
+            color: #229954;
+        }
+        
+        #form-message.error {
+            background-color: #fdeded;
+            color: var(--error-color);
+        }
+
+
+        nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg);
+            display: flex; justify-content: space-around; align-items: center; box-shadow: var(--nav-shadow);
+            z-index: 1000; height: 85px; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 0 10px;
+        }
+        nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; height: 100%;
+            color: var(--nav-item-color); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.3s ease;
+            position: relative; gap: 5px; padding-top: 10px;
+        }
+        nav a i { font-size: 22px; transition: color 0.3s ease; margin-bottom: 2px; }
+        nav a.active { color: var(--nav-active-color); font-weight: 700; }
+        nav a.active::after {
+            content: ''; position: absolute; bottom: 10px; height: 5px; width: 5px;
+            background-color: var(--nav-active-color); border-radius: 50%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <header class="page-header">
+            <h1>تسجيل مريض جديد</h1>
+        </header>
+
+        <div class="form-container">
+            <form id="newPatientForm">
+                <div class="form-group">
+                    <label for="patientName">اسم المريض</label>
+                    <div class="input-wrapper">
+                         <i class="fas fa-user"></i>
+                         <input type="text" id="patientName" name="patientName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientPhone">رقم الهاتف</label>
+                    <div class="input-wrapper">
+                         <i class="fas fa-phone"></i>
+                         <input type="tel" id="patientPhone" name="patientPhone" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientAge">العمر</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-birthday-cake"></i>
+                        <input type="number" id="patientAge" name="patientAge" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentDate">تاريخ الموعد</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor">الطبيب</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-md"></i>
+                        <select id="doctor" name="doctor" required>
+                            </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">حفظ المريض والموعد</button>
+                <div id="form-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <nav>
+        <a href="index.html"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="new-patient.html" class="active"><i class="fas fa-user-plus"></i> مريض جديد</a>
+        <a href="patients.html"><i class="fas fa-users"></i> المرضى</a>
+        <a href="appointments.html"><i class="far fa-calendar-alt"></i> المواعيد</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+    </nav>
+
+    <script>
+        const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        const form = document.getElementById('newPatientForm');
+        const messageDiv = document.getElementById('form-message');
+
+        // Function to populate doctors dropdown
+        async function loadDoctors() {
+            const doctorSelect = document.getElementById('doctor');
+            const { data: doctors, error } = await supabase.from('doctors').select('id, name');
+
+            if (error) {
+                console.error('Error fetching doctors:', error);
+                doctorSelect.innerHTML = `<option value="">خطأ في تحميل الأطباء</option>`;
+                return;
+            }
+            
+            if (doctors.length === 0) {
+                 doctorSelect.innerHTML = `<option value="">لا يوجد أطباء متاحون</option>`;
+            } else {
+                 let options = '<option value="" disabled selected>اختر طبيباً...</option>';
+                 doctors.forEach(doc => {
+                    options += `<option value="${doc.id}">${doc.name}</option>`;
+                 });
+                 doctorSelect.innerHTML = options;
+            }
+        }
+        
+        // Set minimum date for appointment to today
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').setAttribute('min', today);
+        }
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const patientName = formData.get('patientName');
+            const patientPhone = formData.get('patientPhone');
+            const patientAge = formData.get('patientAge');
+            const appointmentDate = formData.get('appointmentDate');
+            const doctorId = formData.get('doctor');
+            
+            // 1. Insert the new patient
+            const { data: patientData, error: patientError } = await supabase
+                .from('patients')
+                .insert([{ 
+                    name: patientName, 
+                    phone_number: patientPhone, 
+                    age: patientAge 
+                }])
+                .select()
+                .single();
+
+            if (patientError) {
+                console.error('Error creating patient:', patientError);
+                showMessage('حدث خطأ أثناء تسجيل المريض.', 'error');
+                return;
+            }
+
+            // 2. If patient is created, insert the appointment
+            const patientId = patientData.id;
+            const { error: appointmentError } = await supabase
+                .from('appointments')
+                .insert([{
+                    patient_id: patientId,
+                    doctor_id: doctorId,
+                    appointment_date: appointmentDate,
+                    status: 'مؤكدة' // Default status
+                }]);
+            
+            if (appointmentError) {
+                console.error('Error creating appointment:', appointmentError);
+                 showMessage('تم حفظ المريض ولكن حدث خطأ في حجز الموعد.', 'error');
+            } else {
+                showMessage('تم حفظ المريض والموعد بنجاح!', 'success');
+                form.reset();
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 4000);
+            }
+        });
+
+        function showMessage(message, type) {
+            messageDiv.textContent = message;
+            messageDiv.className = type;
+            messageDiv.style.display = 'block';
+        }
+
+        // Initial calls when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+             loadDoctors();
+             setMinDate();
+        });
+
+    </script>
+</body>
+</html>
