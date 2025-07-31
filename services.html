@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الخدمات - عيادتي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <header class="page-header">
+            <h1>إدارة الخدمات</h1>
+            <p>أضف وعدّل الخدمات التي تقدمها العيادة وأسعارها.</p>
+        </header>
+
+        <div class="form-container">
+            <form id="serviceForm">
+                <input type="hidden" id="serviceId"> <h3>إضافة أو تعديل خدمة</h3>
+                <div class="form-group">
+                    <label class="label-with-icon"><i class="fas fa-concierge-bell"></i>اسم الخدمة</label>
+                    <input type="text" id="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label class="label-with-icon"><i class="fas fa-dollar-sign"></i>سعر الخدمة</label>
+                    <input type="number" id="servicePrice" required>
+                </div>
+                <div class="form-group">
+                    <label class="label-with-icon"><i class="fas fa-clock"></i>مدة الخدمة (بالدقائق)</label>
+                    <input type="number" id="serviceDuration" required>
+                </div>
+                <button type="submit" id="submitBtn" class="submit-btn">إضافة خدمة</button>
+                <button type="button" id="cancelBtn" class="submit-btn" style="display:none; background-color: #7f8c8d; margin-top: 10px;">إلغاء التعديل</button>
+            </form>
+        </div>
+
+        <div class="list-container">
+            <h2>الخدمات الحالية</h2>
+            <ul id="servicesList" style="list-style: none; padding: 0;"></ul>
+        </div>
+    </div>
+    
+    <nav>
+      </nav>
+
+    <script>
+        const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        const form = document.getElementById('serviceForm');
+        const list = document.getElementById('servicesList');
+        const serviceIdInput = document.getElementById('serviceId');
+        const serviceNameInput = document.getElementById('serviceName');
+        const servicePriceInput = document.getElementById('servicePrice');
+        const serviceDurationInput = document.getElementById('serviceDuration');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+
+        // Load and display services
+        async function loadServices() {
+            const { data, error } = await supabase.from('services').select('*').order('name');
+            if (error) { console.error(error); return; }
+
+            list.innerHTML = '';
+            data.forEach(service => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee;">
+                        <div>
+                            <strong style="font-size: 16px;">${service.name}</strong>
+                            <div style="font-size: 14px; color: #555;">
+                                <span>السعر: ${service.price}</span> | <span>المدة: ${service.duration_minutes} دقيقة</span>
+                            </div>
+                        </div>
+                        <div>
+                            <i class="fas fa-edit" data-id="${service.id}" data-name="${service.name}" data-price="${service.price}" data-duration="${service.duration_minutes}" style="cursor:pointer; color: var(--primary-blue-accent); margin-left: 15px;"></i>
+                            <i class="fas fa-trash" data-id="${service.id}" style="cursor:pointer; color: var(--error-color);"></i>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Handle form submission (for both adding and editing)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const serviceData = {
+                name: serviceNameInput.value,
+                price: servicePriceInput.value,
+                duration_minutes: serviceDurationInput.value
+            };
+            const id = serviceIdInput.value;
+
+            let error;
+            if (id) {
+                // Update existing service
+                ({ error } = await supabase.from('services').update(serviceData).eq('id', id));
+            } else {
+                // Insert new service
+                ({ error } = await supabase.from('services').insert(serviceData));
+            }
+
+            if (error) {
+                alert(`خطأ: ${error.message}`);
+            } else {
+                resetForm();
+                await loadServices();
+            }
+        });
+
+        // Handle clicks on edit or delete icons
+        list.addEventListener('click', async (e) => {
+            const target = e.target;
+            const id = target.dataset.id;
+
+            if (target.classList.contains('fa-trash')) {
+                if (confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
+                    const { error } = await supabase.from('services').delete().eq('id', id);
+                    if (error) { alert(`خطأ: ${error.message}`); } 
+                    else { await loadServices(); }
+                }
+            } else if (target.classList.contains('fa-edit')) {
+                serviceIdInput.value = id;
+                serviceNameInput.value = target.dataset.name;
+                servicePriceInput.value = target.dataset.price;
+                serviceDurationInput.value = target.dataset.duration;
+                submitBtn.textContent = 'تحديث الخدمة';
+                cancelBtn.style.display = 'block';
+                window.scrollTo(0, 0); // Scroll to top to see the form
+            }
+        });
+        
+        // Handle cancel button
+        cancelBtn.addEventListener('click', resetForm);
+
+        function resetForm() {
+            form.reset();
+            serviceIdInput.value = '';
+            submitBtn.textContent = 'إضافة خدمة';
+            cancelBtn.style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadServices);
+    </script>
+</body>
+</html>
