@@ -21,6 +21,12 @@
             --shadow-color-soft: rgba(0, 0, 0, 0.08); /* Soft shadow */
             --shadow-color-medium: rgba(0, 0, 0, 0.15); /* Medium shadow for hover */
             --border-color-subtle: #e0e6ed; /* Subtle border for cards */
+
+            /* New nav colors */
+            --nav-bg: #ffffff;
+            --nav-item-color: #929292;
+            --nav-active-color: var(--primary-blue-light);
+            --nav-active-bg: #e6f0ff; /* Very light blue for active item background */
         }
 
         * {
@@ -31,106 +37,112 @@
         }
 
         body {
-            background-color: var(--main-bg-color); /* Apply main background color */
+            background-color: var(--main-bg-color);
             color: var(--text-color-dark);
-            padding-bottom: 100px; /* Space for fixed nav */
-            padding-top: 90px; /* Reduced padding-top to accommodate smaller header */
-            min-height: 100vh;
+            height: 100vh; /* Make body take full viewport height */
+            overflow: hidden; /* Prevent body scrolling */
             display: flex;
             flex-direction: column;
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); /* Softer blue gradient */
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end));
             color: white;
-            padding: 25px 20px; /* Further reduced vertical padding for smaller header */
+            padding: 25px 20px; /* Compact header */
             text-align: center;
-            font-size: 22px; /* Slightly smaller font for more compact header */
+            font-size: 22px;
             font-weight: 700;
-            box-shadow: 0 8px 25px var(--shadow-color-medium); /* More prominent, soft shadow */
-            border-bottom-left-radius: 35px; /* Larger radius for header */
+            box-shadow: 0 8px 25px var(--shadow-color-medium);
+            border-bottom-left-radius: 35px;
             border-bottom-right-radius: 35px;
             animation: slideDown 0.7s ease-out;
-            position: sticky; /* Sticky header like the image, scrolls with content */
+            position: fixed; /* Header fixed at the top */
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 15; /* Ensure it's above other content on scroll */
+            z-index: 100; /* High z-index to always be on top */
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1; /* Allows it to take available space */
+            padding-top: 90px; /* Space for the fixed header */
+            padding-bottom: 90px; /* Space for the fixed nav */
+            overflow-y: auto; /* Enable vertical scrolling within this div */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
         }
 
         .stats {
-            margin-top: 25px; /* Adjusted margin-top for content below smaller header */
+            margin-top: 25px; /* Space below header (within scrollable area) */
+            margin-bottom: 25px; /* Space above nav (within scrollable area) */
             padding: 0 20px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 25px; /* Larger gap between cards */
+            gap: 25px;
             position: relative;
             z-index: 5;
             animation: fadeIn 1.2s ease-in-out forwards;
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
-            /* Ensure no internal scroll for the stats section itself */
-            overflow: hidden; /* Prevents overflow that might cause scrollbars */
+            overflow: hidden; /* Prevent internal scroll for the grid itself */
         }
 
         .card {
-            background: var(--card-bg-color); /* White card background */
-            border-radius: 25px; /* Very rounded corners for cards */
+            background: var(--card-bg-color);
+            border-radius: 25px;
             padding: 30px;
             text-align: center;
-            box-shadow: 0 12px 30px var(--shadow-color-soft); /* Soft, spread-out shadow */
+            box-shadow: 0 12px 30px var(--shadow-color-soft);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
-            border: 1px solid var(--border-color-subtle); /* Subtle border */
-            /* Ensure no internal scroll for the cards */
-            overflow: hidden; /* Prevents internal scrolling */
-            display: flex; /* Use flexbox for vertical centering if content varies */
+            border: 1px solid var(--border-color-subtle);
+            overflow: hidden; /* Prevent internal scrolling for cards */
+            display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Distribute space if content is short */
+            justify-content: space-between;
             height: 100%; /* Ensure cards take up full height in their grid cell */
         }
 
         .card:hover {
-            transform: translateY(-10px); /* More pronounced lift on hover */
-            box-shadow: 0 18px 40px var(--shadow-color-medium); /* Darker, more spread shadow on hover */
+            transform: translateY(-10px);
+            box-shadow: 0 18px 40px var(--shadow-color-medium);
         }
 
         .card h3 {
-            font-size: 18px; /* Slightly larger heading */
+            font-size: 18px;
             margin-bottom: 12px;
-            color: var(--text-color-dark); /* Darker text for headings */
+            color: var(--text-color-dark);
             font-weight: 600;
         }
 
         .card p {
-            font-size: 34px; /* Larger numbers */
+            font-size: 34px;
             font-weight: 700;
-            color: var(--primary-blue-light); /* Brighter blue for numbers */
+            color: var(--primary-blue-light);
             margin-bottom: 5px;
         }
 
         .card small {
             display: block;
             margin-top: 8px;
-            font-size: 14px; /* Slightly larger small text */
-            color: var(--text-color-light); /* Lighter grey for small text */
+            font-size: 14px;
+            color: var(--text-color-light);
             opacity: 0.9;
         }
 
+        /* New Navigation Bar Style */
         nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: var(--card-bg-color); /* White background for nav */
+            background: var(--nav-bg);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-top: none; /* Removed top border */
-            box-shadow: 0 -8px 30px var(--shadow-color-soft); /* Soft shadow from bottom */
+            box-shadow: 0 -8px 30px var(--shadow-color-soft);
             z-index: 1000;
-            height: 90px; /* Taller nav bar */
-            border-top-left-radius: 40px; /* Very rounded top corners for nav */
+            height: 90px;
+            border-top-left-radius: 40px;
             border-top-right-radius: 40px;
             padding: 0 10px;
         }
@@ -141,45 +153,45 @@
             align-items: center;
             justify-content: center;
             flex: 1;
-            padding: 10px 0;
-            color: var(--text-color-light); /* Lighter grey for inactive icons */
+            height: 100%; /* Ensure full height for clickable area */
+            color: var(--nav-item-color);
             text-decoration: none;
             font-size: 13px;
             transition: all 0.3s ease;
             position: relative;
-            /* Removed any explicit borders between nav items */
-            border: none;
+            border: none; /* No borders */
+            gap: 5px; /* Space between icon and text */
+            padding-top: 15px; /* Adjust padding for visual balance */
+            padding-bottom: 5px;
         }
 
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: 15px; /* Position the line higher, below the icon but above text */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 4px; /* Thicker line */
-            background-color: var(--primary-blue-light); /* Blue active line */
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        nav a:hover, nav a.active {
-            color: var(--primary-blue-light); /* Blue for active/hover */
-        }
-
-        nav a.active::after {
-            width: 30px; /* Specific width for the active line like the image */
+        /* Active state for new nav style */
+        nav a.active {
+            color: var(--nav-active-color);
         }
 
         nav a i {
-            font-size: 26px; /* Larger icons */
-            margin-bottom: 8px; /* More space between icon and text */
-            transition: transform 0.3s ease, color 0.3s ease;
+            font-size: 24px; /* Slightly smaller icons for a refined look */
+            transition: color 0.3s ease;
         }
 
-        nav a:hover i {
-            transform: translateY(-3px); /* More pronounced lift */
+        nav a.active i {
+            /* Create a circular background for the active icon */
+            background-color: var(--nav-active-bg);
+            border-radius: 50%; /* Makes it circular */
+            padding: 10px; /* Padding inside the circle */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for the circle */
+            transform: translateY(-5px); /* Lift icon slightly */
+            color: var(--nav-active-color); /* Active icon color */
+        }
+        
+        nav a:not(.active) i:hover {
+            color: var(--primary-blue-light); /* Hover effect for inactive icons */
+        }
+
+        /* Hide the line for the new nav style */
+        nav a::after {
+            display: none;
         }
 
         @keyframes fadeIn {
@@ -195,12 +207,16 @@
         /* Responsive adjustments */
         @media (max-width: 600px) {
             body {
-                padding-bottom: 80px;
-                padding-top: 80px; /* Adjusted padding-top for smaller header on mobile */
+                padding-top: 75px; /* Adjusted padding-top for smaller header on mobile */
+                padding-bottom: 80px; /* Space for mobile nav */
             }
             header {
-                font-size: 20px; /* Smaller font on mobile */
-                padding: 20px 15px; /* Reduced padding on mobile */
+                font-size: 20px;
+                padding: 20px 15px;
+            }
+            .main-content-wrapper {
+                padding-top: 75px; /* Adjusted for mobile header */
+                padding-bottom: 80px; /* Adjusted for mobile nav */
             }
             .stats {
                 grid-template-columns: 1fr 1fr;
@@ -224,17 +240,16 @@
                 border-top-right-radius: 30px;
             }
             nav a {
-                font-size: 12px;
-                padding: 8px 0;
+                font-size: 11px;
+                padding-top: 10px;
+                gap: 3px;
             }
             nav a i {
-                font-size: 22px;
-                margin-bottom: 5px;
+                font-size: 20px;
+                padding: 8px; /* Smaller padding for mobile active circle */
             }
-            nav a::after {
-                bottom: 12px;
-                height: 3px;
-                width: 25px;
+            nav a.active i {
+                transform: translateY(-3px); /* Less lift on mobile */
             }
         }
     </style>
@@ -242,40 +257,40 @@
 <body>
     <header id="clinicName">مرحباً جينيفر!</header>
 
-    <section class="stats">
-        <div class="card patients">
-            <h3>إجمالي المرضى</h3>
-            <p id="totalPatientCount">0</p>
-            <small>في جميع الأوقات</small>
-        </div>
-        <div class="card appointments">
-            <h3>المواعيد النشطة</h3>
-            <p id="activeAppointmentCount">0</p>
-            <small>خلال الأسبوع الحالي</small>
-        </div>
-        <div class="card completed">
-            <h3>الحجوزات المكتملة</h3>
-            <p id="completedAppointments">0</p>
-            <small>لهذا الشهر</small>
-        </div>
-        <div class="card doctors">
-            <h3>عدد الأطباء</h3>
-            <p id="doctorsCount">0</p>
-            <small>المتاحون حالياً</small>
-        </div>
-        <div class="card pending">
-            <h3>مواعيد معلقة</h3>
-            <p id="pendingAppointments">0</p>
-            <small>بانتظار التأكيد</small>
-        </div>
-        <div class="card revenue">
-            <h3>إجمالي الإيرادات</h3>
-            <p id="totalRevenue">0</p>
-            <small>لهذا الشهر ($)</small>
-        </div>
-    </section>
-
-    <nav>
+    <div class="main-content-wrapper">
+        <section class="stats">
+            <div class="card patients">
+                <h3>إجمالي المرضى</h3>
+                <p id="totalPatientCount">0</p>
+                <small>في جميع الأوقات</small>
+            </div>
+            <div class="card appointments">
+                <h3>المواعيد النشطة</h3>
+                <p id="activeAppointmentCount">0</p>
+                <small>خلال الأسبوع الحالي</small>
+            </div>
+            <div class="card completed">
+                <h3>الحجوزات المكتملة</h3>
+                <p id="completedAppointments">0</p>
+                <small>لهذا الشهر</small>
+            </div>
+            <div class="card doctors">
+                <h3>عدد الأطباء</h3>
+                <p id="doctorsCount">0</p>
+                <small>المتاحون حالياً</small>
+            </div>
+            <div class="card pending">
+                <h3>مواعيد معلقة</h3>
+                <p id="pendingAppointments">0</p>
+                <small>بانتظار التأكيد</small>
+            </div>
+            <div class="card revenue">
+                <h3>إجمالي الإيرادات</h3>
+                <p id="totalRevenue">0</p>
+                <small>لهذا الشهر ($)</small>
+            </div>
+        </section>
+    </div> <nav>
         <a href="index.html" class="active">
             <i class="fas fa-home"></i>
             الرئيسية
@@ -304,47 +319,37 @@
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         async function loadStats() {
-            // Get current month and week for filtering
             const now = new Date();
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
             const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
-            // Calculate start and end of current week (assuming week starts on Sunday)
-            const dayOfWeek = now.getDay(); // 0 for Sunday, 1 for Monday, etc.
+            const dayOfWeek = now.getDay();
             const diffToSunday = now.getDate() - dayOfWeek;
             const startOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday).toISOString();
             const endOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday + 6, 23, 59, 59).toISOString();
 
-
-            // Fetching all patients for total count
             const { data: totalPatients, error: totalPatientsError } = await supabase.from('patients').select('id');
             if (totalPatientsError) console.error('Error fetching total patients:', totalPatientsError.message);
 
-            // Fetching appointments for current week
             const { data: activeAppointments, error: activeAppointmentsError } = await supabase.from('appointments').select('id, status')
                 .gte('appointment_date', startOfWeek)
                 .lte('appointment_date', endOfWeek)
-                .in('status', ['مؤكدة', 'قيد الانتظار']); // Assuming statuses like 'confirmed' or 'pending' for active
+                .in('status', ['مؤكدة', 'قيد الانتظار']);
 
             if (activeAppointmentsError) console.error('Error fetching active appointments:', activeAppointmentsError.message);
 
-            // Fetching completed appointments for current month
             const { data: completedAppointments, error: completedAppointmentsError } = await supabase.from('appointments').select('id')
                 .eq('status', 'مكتملة')
                 .gte('appointment_date', startOfMonth)
                 .lte('appointment_date', endOfMonth);
             if (completedAppointmentsError) console.error('Error fetching completed appointments:', completedAppointmentsError.message);
 
-            // Fetching pending appointments
             const { data: pendingAppointments, error: pendingAppointmentsError } = await supabase.from('appointments').select('id').eq('status', 'قيد الانتظار');
             if (pendingAppointmentsError) console.error('Error fetching pending appointments:', pendingAppointmentsError.message);
 
-            // Fetching doctors count
             const { data: doctors, error: doctorsError } = await supabase.from('doctors').select('id');
             if (doctorsError) console.error('Error fetching doctors:', doctorsError.message);
 
-            // Fetching revenue (assuming a 'transactions' table with a 'amount' column and 'created_at' for date)
-            // This is a placeholder; you'll need to adjust table/column names based on your actual Supabase schema
             const { data: transactions, error: transactionsError } = await supabase.from('transactions').select('amount')
                 .gte('created_at', startOfMonth)
                 .lte('created_at', endOfMonth);
@@ -355,14 +360,12 @@
                 totalRevenue = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
             }
 
-
-            // Update DOM elements
             document.getElementById('totalPatientCount').textContent = totalPatients?.length || 0;
             document.getElementById('activeAppointmentCount').textContent = activeAppointments?.length || 0;
             document.getElementById('completedAppointments').textContent = completedAppointments?.length || 0;
             document.getElementById('pendingAppointments').textContent = pendingAppointments?.length || 0;
             document.getElementById('doctorsCount').textContent = doctors?.length || 0;
-            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2); // Format as currency
+            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2);
         }
 
         loadStats();
