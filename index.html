@@ -8,22 +8,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
+        /* Define color variables to match the provided UI design */
         :root {
-            --primary-color: #007bff; /* Standard professional blue */
-            --primary-dark: #0056b3;
-            --primary-light: #e6f2ff; /* Light shade of primary */
-            --secondary-color: #6c757d; /* Subtle grey for secondary text */
-            --background-light: #f8f9fa;
-            --background-gradient-start: #e0f2fe;
-            --background-gradient-end: #ffffff;
-            --card-background: #ffffff;
-            --border-color: #dee2e6;
-            --shadow-light: rgba(0, 0, 0, 0.05);
-            --shadow-medium: rgba(0, 0, 0, 0.1);
-            --gradient-blue-light: linear-gradient(145deg, #e0f2ff, #cce0ff);
-            --gradient-green-light: linear-gradient(145deg, #e6ffe6, #cce0cc);
-            --gradient-orange-light: linear-gradient(145deg, #fff0e6, #ffe0cc);
-            --gradient-purple-light: linear-gradient(145deg, #f0e6ff, #e0ccff);
+            --main-bg-color: #f0f4f8; /* Light greyish-blue background from image */
+            --card-bg-color: #ffffff; /* White card background */
+            --primary-blue-dark: #2c3e50; /* Dark blue for profile/header text */
+            --primary-blue-light: #5a8dee; /* Brighter blue for highlights/active */
+            --primary-gradient-start: #4a90e2; /* Gradient start for header/cards */
+            --primary-gradient-end: #3f7de0; /* Gradient end for header/cards */
+            --text-color-dark: #333333; /* Dark text for headings */
+            --text-color-light: #888888; /* Lighter text for descriptions/small */
+            --shadow-color-soft: rgba(0, 0, 0, 0.08); /* Soft shadow */
+            --shadow-color-medium: rgba(0, 0, 0, 0.15); /* Medium shadow for hover */
+            --border-color-subtle: #e0e6ed; /* Subtle border for cards */
         }
 
         * {
@@ -34,39 +31,38 @@
         }
 
         body {
-            background: linear-gradient(to bottom, var(--background-gradient-start), var(--background-gradient-end));
-            color: #333;
-            padding-top: 100px; /* Increased padding-top to prevent header overlap */
-            padding-bottom: 90px;
+            background-color: var(--main-bg-color); /* Apply main background color */
+            color: var(--text-color-dark);
+            padding-bottom: 100px; /* Space for fixed nav */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); /* Softer blue gradient */
             color: white;
-            padding: 40px 20px 30px;
+            padding: 45px 20px 35px; /* More vertical padding for a modern feel */
             text-align: center;
-            font-size: 26px;
+            font-size: 28px; /* Slightly larger for prominence */
             font-weight: 700;
-            box-shadow: 0 4px 15px var(--shadow-medium);
-            border-bottom-left-radius: 25px;
-            border-bottom-right-radius: 25px;
+            box-shadow: 0 8px 25px var(--shadow-color-medium); /* More prominent, soft shadow */
+            border-bottom-left-radius: 35px; /* Larger radius for header */
+            border-bottom-right-radius: 35px;
             animation: slideDown 0.7s ease-out;
-            position: fixed; /* Make header fixed */
+            position: sticky; /* Sticky header like the image, scrolls with content */
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 20; /* Higher z-index for fixed header */
+            z-index: 15; /* Ensure it's above other content on scroll */
         }
 
         .stats {
-            margin-top: 20px; /* Adjusted margin-top for content below fixed header */
+            margin-top: 30px; /* Space below header */
             padding: 0 20px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
+            gap: 25px; /* Larger gap between cards */
             position: relative;
             z-index: 5;
             animation: fadeIn 1.2s ease-in-out forwards;
@@ -76,48 +72,49 @@
         }
 
         .card {
-            background: var(--card-background);
-            border-radius: 18px;
+            background: var(--card-bg-color); /* White card background */
+            border-radius: 25px; /* Very rounded corners for cards */
             padding: 30px;
             text-align: center;
-            box-shadow: 0 10px 30px var(--shadow-light);
+            box-shadow: 0 12px 30px var(--shadow-color-soft); /* Soft, spread-out shadow */
             transition: transform 0.4s ease, box-shadow 0.4s ease;
-            border: 1px solid var(--border-color);
-            /* Default background for cards, can be overridden by specific classes */
+            border: 1px solid var(--border-color-subtle); /* Subtle border */
         }
 
-        .card.patients { background: var(--gradient-blue-light); }
-        .card.appointments { background: var(--gradient-green-light); }
-        .card.completed { background: var(--gradient-purple-light); }
-        .card.doctors { background: var(--gradient-orange-light); }
-        .card.pending { background: var(--gradient-orange-light); }
-        .card.revenue { background: var(--gradient-green-light); }
+        /* Specific card styles with subtle internal gradients if desired, similar to image */
+        .card.patients { /* Example, can apply a very subtle internal gradient */ }
+        .card.appointments { /* Example */ }
+        .card.completed { /* Example */ }
+        .card.doctors { /* Example */ }
+        .card.pending { /* Example */ }
+        .card.revenue { /* Example */ }
+
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 36px var(--shadow-medium);
+            transform: translateY(-10px); /* More pronounced lift on hover */
+            box-shadow: 0 18px 40px var(--shadow-color-medium); /* Darker, more spread shadow on hover */
         }
 
         .card h3 {
-            font-size: 17px;
+            font-size: 18px; /* Slightly larger heading */
             margin-bottom: 12px;
-            color: var(--secondary-color);
+            color: var(--text-color-dark); /* Darker text for headings */
             font-weight: 600;
         }
 
         .card p {
-            font-size: 32px;
+            font-size: 34px; /* Larger numbers */
             font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--primary-blue-light); /* Brighter blue for numbers */
             margin-bottom: 5px;
         }
 
         .card small {
             display: block;
             margin-top: 8px;
-            font-size: 13px;
-            color: var(--secondary-color);
-            opacity: 0.8;
+            font-size: 14px; /* Slightly larger small text */
+            color: var(--text-color-light); /* Lighter grey for small text */
+            opacity: 0.9;
         }
 
         nav {
@@ -125,16 +122,16 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: var(--card-background);
+            background: var(--card-bg-color); /* White background for nav */
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-top: 1px solid var(--border-color);
-            box-shadow: 0 -4px 20px var(--shadow-light);
+            border-top: none; /* No top border, rely on shadow */
+            box-shadow: 0 -8px 30px var(--shadow-color-soft); /* Soft shadow from bottom */
             z-index: 1000;
-            height: 80px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            height: 90px; /* Taller nav bar */
+            border-top-left-radius: 40px; /* Very rounded top corners for nav */
+            border-top-right-radius: 40px;
             padding: 0 10px;
         }
 
@@ -145,7 +142,7 @@
             justify-content: center;
             flex: 1;
             padding: 10px 0;
-            color: var(--secondary-color);
+            color: var(--text-color-light); /* Lighter grey for inactive icons */
             text-decoration: none;
             font-size: 13px;
             transition: all 0.3s ease;
@@ -155,33 +152,38 @@
         nav a::after {
             content: '';
             position: absolute;
-            bottom: 5px;
+            bottom: 15px; /* Position the line higher, below the icon but above text */
             left: 50%;
             transform: translateX(-50%);
             width: 0;
-            height: 3px;
-            background-color: var(--primary-color);
+            height: 4px; /* Thicker line */
+            background-color: var(--primary-blue-light); /* Blue active line */
             border-radius: 2px;
             transition: width 0.3s ease;
         }
 
         nav a:hover, nav a.active {
-            color: var(--primary-color);
+            color: var(--primary-blue-light); /* Blue for active/hover */
         }
 
         nav a.active::after {
-            width: 70%;
+            width: 30px; /* Specific width for the active line like the image */
         }
 
         nav a i {
-            font-size: 22px;
-            margin-bottom: 6px;
-            transition: transform 0.3s ease;
+            font-size: 26px; /* Larger icons */
+            margin-bottom: 8px; /* More space between icon and text */
+            transition: transform 0.3s ease, color 0.3s ease;
         }
 
         nav a:hover i {
-            transform: translateY(-2px);
+            transform: translateY(-3px); /* More pronounced lift */
         }
+
+        /* Adjustments for the middle '+' button if implemented - currently not in HTML */
+        /* If you want the '+' button in the middle, you'd add an `a` tag with a specific class
+           and style it separately within the nav. For this response, I'm keeping your
+           existing nav structure, but styling it to match. */
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -196,41 +198,50 @@
         /* Responsive adjustments */
         @media (max-width: 600px) {
             body {
-                padding-top: 80px; /* Adjust padding for smaller screens */
+                padding-bottom: 80px;
             }
             header {
-                font-size: 22px;
-                padding: 30px 15px 25px;
+                font-size: 24px;
+                padding: 35px 15px 25px;
             }
             .stats {
                 grid-template-columns: 1fr 1fr;
-                gap: 15px;
+                gap: 20px;
                 padding: 0 15px;
             }
             .card {
                 padding: 25px;
+                border-radius: 20px;
             }
             .card p {
-                font-size: 28px;
+                font-size: 30px;
+            }
+            .card h3 {
+                font-size: 16px;
             }
             nav {
-                height: 70px;
+                height: 80px;
+                border-top-left-radius: 30px;
+                border-top-right-radius: 30px;
             }
             nav a {
-                font-size: 11px;
-                padding: 6px 0;
+                font-size: 12px;
+                padding: 8px 0;
             }
             nav a i {
-                font-size: 18px;
-                margin-bottom: 3px;
+                font-size: 22px;
+                margin-bottom: 5px;
+            }
+            nav a::after {
+                bottom: 12px;
+                height: 3px;
+                width: 25px;
             }
         }
     </style>
 </head>
 <body>
-    <header id="clinicName">عيادة الحياة</header>
-
-    <section class="stats">
+    <header id="clinicName">مرحباً جينيفر!</header> <section class="stats">
         <div class="card patients">
             <h3>إجمالي المرضى</h3>
             <p id="totalPatientCount">0</p>
@@ -277,7 +288,8 @@
             المرضى
         </a>
         <a href="appointments.html">
-            <i class="far fa-calendar-alt"></i> المواعيد
+            <i class="far fa-calendar-alt"></i>
+            المواعيد
         </a>
         <a href="settings.html">
             <i class="fas fa-cog"></i>
