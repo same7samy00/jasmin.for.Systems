@@ -1,151 +1,275 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>الرئيسية - عيادتي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <style>
-    * {
-      font-family: 'Cairo', sans-serif;
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background-color: #f0f4f8;
-      color: #222;
-      padding-bottom: 80px;
-    }
-    header {
-      background-color: #4da6ff;
-      color: white;
-      padding: 20px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border-bottom-left-radius: 10px;
-      border-bottom-right-radius: 10px;
-      animation: slideDown 0.6s ease-in-out;
-    }
-    .stats {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 20px;
-      animation: fadeIn 1s ease-in-out;
-    }
-    .card {
-      background: white;
-      border-radius: 8px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    }
-    .card h3 {
-      font-size: 16px;
-      margin-bottom: 8px;
-      color: #555;
-    }
-    .card p {
-      font-size: 26px;
-      font-weight: bold;
-      color: #3399ff;
-    }
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: white;
-      display: flex;
-      justify-content: space-around;
-      border-top: 1px solid #ddd;
-      box-shadow: 0 -1px 6px rgba(0,0,0,0.05);
-      z-index: 1000;
-    }
-    nav a {
-      padding: 12px 0;
-      text-align: center;
-      flex: 1;
-      color: #666;
-      text-decoration: none;
-      font-size: 13px;
-      transition: color 0.3s;
-    }
-    nav a:hover {
-      color: #3399ff;
-    }
-    nav a i {
-      display: block;
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية - عيادتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        :root {
+            --primary-color: #007bff; /* A more standard professional blue */
+            --primary-dark: #0056b3;
+            --secondary-color: #6c757d; /* A subtle grey for secondary text */
+            --background-light: #f8f9fa; /* Lighter background */
+            --background-gradient-start: #e0f2fe;
+            --background-gradient-end: #ffffff;
+            --card-background: #ffffff;
+            --border-color: #dee2e6;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(to bottom, var(--background-gradient-start), var(--background-gradient-end));
+            color: #333; /* Darker text for better readability */
+            padding-bottom: 90px; /* Increased for better nav spacing */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 40px 20px 30px; /* More vertical padding */
+            text-align: center;
+            font-size: 26px; /* Slightly larger font */
+            font-weight: 700; /* Bolder for prominence */
+            box-shadow: 0 4px 15px var(--shadow-medium);
+            border-bottom-left-radius: 25px; /* More pronounced radius */
+            border-bottom-right-radius: 25px;
+            animation: slideDown 0.7s ease-out;
+            position: relative; /* For potential future elements */
+            z-index: 10;
+        }
+
+        .stats {
+            margin-top: -30px; /* Overlap with header slightly for modern look */
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Slightly larger min-width */
+            gap: 20px; /* Increased gap */
+            position: relative;
+            z-index: 5;
+            animation: fadeIn 1.2s ease-in-out forwards; /* Ensures animation stays */
+            max-width: 1200px; /* Max width for larger screens */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 18px; /* Softer corners */
+            padding: 30px; /* More padding */
+            text-align: center;
+            box-shadow: 0 10px 30px var(--shadow-light); /* More prominent but soft shadow */
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 1px solid var(--border-color); /* Subtle border */
+        }
+
+        .card:hover {
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 16px 36px var(--shadow-medium); /* Darker shadow on hover */
+        }
+
+        .card h3 {
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: var(--secondary-color); /* Subtle color for headings */
+            font-weight: 600;
+        }
+
+        .card p {
+            font-size: 32px; /* Larger numbers */
+            font-weight: 700;
+            color: var(--primary-dark); /* Darker primary color for numbers */
+            margin-bottom: 5px;
+        }
+
+        .card small {
+            display: block;
+            margin-top: 8px; /* More spacing */
+            font-size: 13px;
+            color: var(--secondary-color);
+            opacity: 0.8;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-background);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 20px var(--shadow-light);
+            z-index: 1000;
+            height: 80px; /* Taller navigation */
+            border-top-left-radius: 20px; /* Softer radius */
+            border-top-right-radius: 20px;
+            padding: 0 10px;
+        }
+
+        nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 10px 0; /* More padding */
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 5px; /* Position line slightly above bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary-color);
+        }
+
+        nav a.active::after {
+            width: 70%; /* Active line width */
+        }
+
+        nav a i {
+            font-size: 22px; /* Slightly larger icons */
+            margin-bottom: 6px; /* More space between icon and text */
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover i {
+            transform: translateY(-2px); /* Subtle bounce on hover */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header {
+                font-size: 22px;
+                padding: 30px 15px 25px;
+            }
+            .stats {
+                grid-template-columns: 1fr 1fr; /* Two columns on smaller screens */
+                gap: 15px;
+                padding: 0 15px;
+            }
+            .card {
+                padding: 25px;
+            }
+            .card p {
+                font-size: 28px;
+            }
+            nav {
+                height: 70px;
+            }
+            nav a {
+                font-size: 11px;
+                padding: 6px 0;
+            }
+            nav a i {
+                font-size: 18px;
+                margin-bottom: 3px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header id="clinicName">عيادة الحياة</header>
+    <header id="clinicName">عيادة الحياة</header>
 
-  <section class="stats">
-    <div class="card">
-      <h3>عدد المرضى</h3>
-      <p id="patientCount">0</p>
-    </div>
-    <div class="card">
-      <h3>عدد المواعيد</h3>
-      <p id="appointmentCount">0</p>
-    </div>
-  </section>
+    <section class="stats">
+        <div class="card">
+            <h3>عدد المرضى</h3>
+            <p id="patientCount">0</p>
+            <small>تمت إضافتهم هذا الشهر</small>
+        </div>
+        <div class="card">
+            <h3>عدد المواعيد</h3>
+            <p id="appointmentCount">0</p>
+            <small>نشطة هذا الأسبوع</small>
+        </div>
+        <div class="card">
+            <h3>الحجوزات المكتملة</h3>
+            <p id="completedAppointments">0</p>
+            <small>تمت معالجتهم</small>
+        </div>
+        <div class="card">
+            <h3>عدد الأطباء</h3>
+            <p id="doctorsCount">0</p>
+            <small>متاحين حالياً</small>
+        </div>
+    </section>
 
-  <nav>
-    <a href="#">
-      <i class="fas fa-home"></i>
-      الرئيسية
-    </a>
-    <a href="#">
-      <i class="fas fa-user-plus"></i>
-      إضافة مريض
-    </a>
-    <a href="#">
-      <i class="fas fa-users"></i>
-      المرضى
-    </a>
-    <a href="#">
-      <i class="fas fa-cog"></i>
-      الإعدادات
-    </a>
-  </nav>
+    <nav>
+        <a href="#" class="active">
+            <i class="fas fa-home"></i>
+            الرئيسية
+        </a>
+        <a href="#">
+            <i class="fas fa-user-plus"></i>
+            مريض جديد
+        </a>
+        <a href="#">
+            <i class="fas fa-users"></i>
+            المرضى
+        </a>
+        <a href="#">
+            <i class="fas fa-cog"></i>
+            الإعدادات
+        </a>
+    </nav>
 
-  <script>
-    const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    <script>
+        const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadStats() {
-      const { data: patients, error: patientError } = await supabase.from('patients').select('*');
-      const { data: appointments, error: appointmentError } = await supabase.from('appointments').select('*');
+        async function loadStats() {
+            const { data: patients } = await supabase.from('patients').select('*');
+            const { data: appointments } = await supabase.from('appointments').select('*');
+            const { data: completed } = await supabase.from('appointments').select('status').eq('status', 'مكتملة');
+            const { data: doctors } = await supabase.from('doctors').select('*');
 
-      document.getElementById('patientCount').textContent = patients?.length || 0;
-      document.getElementById('appointmentCount').textContent = appointments?.length || 0;
-    }
+            document.getElementById('patientCount').textContent = patients?.length || 0;
+            document.getElementById('appointmentCount').textContent = appointments?.length || 0;
+            document.getElementById('completedAppointments').textContent = completed?.length || 0;
+            document.getElementById('doctorsCount').textContent = doctors?.length || 0;
+        }
 
-    loadStats();
-  </script>
+        loadStats();
+    </script>
 </body>
 </html>
