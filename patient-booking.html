@@ -4,23 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إضافة وحجز - عيادتي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <div class="main-content-wrapper">
-        <header class="page-header">
-            <h1>إضافة مريض وحجز موعد</h1>
-            <p>سجل بيانات المريض والموعد الأول له.</p>
-        </header>
+        <header class="page-header"><h1>إضافة مريض وحجز موعد</h1></header>
 
-        <form id="patientBookingForm">
+        <form id="bookingForm">
             <div class="form-container">
-                <h2>بيانات المريض</h2>
-                <div id="uniqueness-message" style="color: var(--error-color); margin-bottom: 10px; font-weight: bold;"></div>
-                
+                <h2>1. بيانات المريض</h2>
                 <div class="form-group">
                     <label class="label-with-icon"><i class="fas fa-user"></i>الاسم الكامل</label>
                     <input type="text" id="patientName" required>
@@ -29,12 +23,15 @@
                     <label class="label-with-icon"><i class="fas fa-phone"></i>رقم الهاتف</label>
                     <input type="tel" id="patientPhone" required>
                 </div>
-                
                 <div id="dynamic-fields-container"></div>
             </div>
 
             <div class="form-container">
-                <h2>تفاصيل الحجز</h2>
+                <h2>2. تفاصيل الحجز</h2>
+                <div class="form-group">
+                    <label class="label-with-icon"><i class="fas fa-concierge-bell"></i>الخدمة المقدمة</label>
+                    <select id="service" class="form-group" style="width: 100%; padding: 12px;" required></select>
+                </div>
                  <div class="form-group">
                     <label class="label-with-icon"><i class="fas fa-calendar-alt"></i>التاريخ</label>
                     <input type="date" id="appointmentDate" required>
@@ -45,7 +42,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn">تسجيل وحجز</button>
+            <button type="submit" class="submit-btn">حفظ وتسجيل الموعد</button>
         </form>
     </div>
 
@@ -61,79 +58,79 @@
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
-        const form = document.getElementById('patientBookingForm');
-        const patientNameInput = document.getElementById('patientName');
-        const uniquenessMessage = document.getElementById('uniqueness-message');
+        const serviceSelect = document.getElementById('service');
+        const form = document.getElementById('bookingForm');
 
-        async function generateCustomForm() {
-            // This function will create the form based on what you define in the 'form_fields' table
-            // To test, add fields manually to your 'form_fields' table in Supabase for now
-            // Example: field_label: 'فصيلة الدم', field_name: 'blood_type'
-            const { data: fields, error } = await supabase.from('form_fields').select('*');
-            if (error || !fields) return;
-            
-            fields.forEach(field => {
-                const formGroup = document.createElement('div');
-                formGroup.className = 'form-group';
-                formGroup.innerHTML = `
-                    <label class="label-with-icon"><i class="fas fa-clipboard-list"></i> ${field.field_label}</label>
-                    <input type="text" id="custom_${field.field_name}" name="${field.field_name}" value="${field.default_value || ''}">
-                `;
-                dynamicFieldsContainer.appendChild(formGroup);
-            });
+        async function initializePage() {
+            // Load custom fields
+            const { data: fields } = await supabase.from('form_fields').select('*');
+            if (fields) {
+                fields.forEach(field => {
+                    dynamicFieldsContainer.innerHTML += `
+                        <div class="form-group">
+                            <label class="label-with-icon"><i class="fas fa-clipboard-list"></i> ${field.field_label}</label>
+                            <input type="text" id="custom_${field.field_name}" name="${field.field_name}" value="${field.default_value || ''}">
+                        </div>`;
+                });
+            }
+
+            // Load services
+            const { data: services } = await supabase.from('services').select('*');
+            if (services) {
+                serviceSelect.innerHTML = '<option value="">اختر خدمة...</option>';
+                services.forEach(service => {
+                    serviceSelect.innerHTML += `<option value="${service.id}" data-price="${service.price}">${service.name}</option>`;
+                });
+            }
         }
-
-        let typingTimeout;
-        patientNameInput.addEventListener('input', () => {
-            clearTimeout(typingTimeout);
-            uniquenessMessage.textContent = '';
-            typingTimeout = setTimeout(async () => {
-                const name = patientNameInput.value.trim();
-                if (name.length > 2) {
-                    const { data } = await supabase.from('patients').select('id').eq('name', name);
-                    if (data && data.length > 0) {
-                        uniquenessMessage.textContent = 'هذا الاسم مسجل بالفعل.';
-                    }
-                }
-            }, 500);
-        });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (uniquenessMessage.textContent) {
-                alert('لا يمكن إضافة مريض بنفس الاسم.');
-                return;
-            }
-            
-            const customData = {};
-            dynamicFieldsContainer.querySelectorAll('input').forEach(input => {
-                customData[input.name] = input.value;
-            });
-            
             try {
+                // Collect custom data
+                const customData = {};
+                dynamicFieldsContainer.querySelectorAll('input').forEach(input => { customData[input.name] = input.value; });
+
+                // 1. Insert patient
                 const { data: patient, error: pError } = await supabase.from('patients').insert({
-                    name: patientNameInput.value,
+                    name: document.getElementById('patientName').value,
                     phone_number: document.getElementById('patientPhone').value,
                     custom_data: customData
                 }).select('id').single();
                 if (pError) throw pError;
+
+                // 2. Insert appointment
+                const serviceElement = serviceSelect.options[serviceSelect.selectedIndex];
+                const servicePrice = serviceElement.dataset.price;
                 
-                const { error: aError } = await supabase.from('appointments').insert({
+                const { data: appointment, error: aError } = await supabase.from('appointments').insert({
                     patient_id: patient.id,
+                    service_id: serviceElement.value,
                     appointment_date: document.getElementById('appointmentDate').value,
-                    time_slot: document.getElementById('appointmentTime').value,
-                    status: 'مؤكدة'
-                });
+                    time_slot: document.getElementById('appointmentTime').value
+                }).select('id').single();
                 if (aError) throw aError;
                 
-                alert('تم تسجيل المريض وحجز الموعد بنجاح!');
+                // 3. Auto-generate income transaction
+                if (servicePrice > 0) {
+                    await supabase.from('transactions').insert({
+                        description: `دخل من خدمة: ${serviceElement.text}`,
+                        amount: servicePrice,
+                        type: 'Income',
+                        appointment_id: appointment.id,
+                        patient_id: patient.id
+                    });
+                }
+                
+                alert('تم تسجيل المريض والموعد والمعاملة المالية بنجاح!');
                 form.reset();
+
             } catch (error) {
                 alert(`خطأ: ${error.message}`);
             }
         });
-        
-        document.addEventListener('DOMContentLoaded', generateCustomForm);
+
+        document.addEventListener('DOMContentLoaded', initializePage);
     </script>
 </body>
 </html>
