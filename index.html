@@ -19,7 +19,7 @@
             --text-color-dark: #333333; /* Dark text for headings */
             --text-color-light: #888888; /* Lighter text for descriptions/small */
             
-            /* Enhanced Shadow for cards (soft, spreads more) */
+            /* Enhanced Shadow for cards (soft, spreads more) - هذه المتغيرات لن تُستخدم الآن للبطاقات */
             --card-shadow: 0 15px 40px rgba(0, 0, 0, 0.08); 
             --card-hover-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
 
@@ -34,11 +34,11 @@
             --nav-active-color: var(--primary-blue-light);
             --nav-active-bg: #e6f0ff; /* Very light blue for active item background */
 
-            /* New Card Gradients (professional, subtle) */
-            --gradient-card-blue: linear-gradient(145deg, #e0f2fe, #cbe3fa); /* For Patients */
-            --gradient-card-green: linear-gradient(145deg, #e7ffe0, #d4f8cb); /* For Appointments/Revenue */
-            --gradient-card-purple: linear-gradient(145deg, #f0e6ff, #e0ccff); /* For Completed */
-            --gradient-card-orange: linear-gradient(145deg, #fff0e6, #ffe0cc); /* For Doctors/Pending */
+            /* New Card Gradients (professional, subtle) - هذه المتغيرات لن تُستخدم الآن للبطاقات */
+            --gradient-card-blue: linear-gradient(145deg, #e0f2fe, #cbe3fa);
+            --gradient-card-green: linear-gradient(145deg, #e7ffe0, #d4f8cb);
+            --gradient-card-purple: linear-gradient(145deg, #f0e6ff, #e0ccff);
+            --gradient-card-orange: linear-gradient(145deg, #fff0e6, #ffe0cc);
         }
 
         * {
@@ -100,13 +100,13 @@
         }
 
         .card {
-            background: var(--card-bg-color); /* Default, overridden by specific gradients */
+            background: var(--card-bg-color); /* White card background */
             border-radius: 25px;
             padding: 30px;
             text-align: center;
-            box-shadow: var(--card-shadow); /* Applied refined card shadow */
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            border: 1px solid var(--border-color-subtle);
+            box-shadow: none; /* تم إزالة الظلال من البطاقات */
+            transition: transform 0.4s ease, box-shadow 0.4s ease; /* ترك الترانزيشن للتحويل عند التحويم */
+            border: 1px solid black; /* إضافة حدود سوداء 1 بيكسل */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -114,18 +114,14 @@
             height: 100%;
         }
 
-        /* Applying new card gradients */
-        .card.patients { background: var(--gradient-card-blue); }
-        .card.appointments { background: var(--gradient-card-green); }
-        .card.completed { background: var(--gradient-card-purple); }
-        .card.doctors { background: var(--gradient-card-orange); }
-        .card.pending { background: var(--gradient-card-orange); } /* Re-using orange */
-        .card.revenue { background: var(--gradient-card-green); } /* Re-using green */
-
+        /* تم إزالة تدرجات الألوان من البطاقات */
+        .card.patients, .card.appointments, .card.completed, .card.doctors, .card.pending, .card.revenue {
+            background: var(--card-bg-color); /* إجبار الخلفية لتكون بيضاء (أو لون البطاقة الافتراضي) */
+        }
 
         .card:hover {
             transform: translateY(-10px);
-            box-shadow: var(--card-hover-shadow); /* Applied refined hover shadow */
+            box-shadow: none; /* إزالة الظلال عند التحويم أيضًا */
         }
 
         .card h3 {
