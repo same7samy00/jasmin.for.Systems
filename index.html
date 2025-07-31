@@ -4,367 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الرئيسية - عيادتي</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <style>
-        /* --- START: CSS Variables Inspired by the UI Design --- */
-        :root {
-            --main-bg-color: #f0f4f8; /* Light greyish-blue background from image */
-            --card-bg-color: #ffffff; /* White card background */
-            --primary-blue-dark: #2c3e50; /* Dark blue for headings and active states */
-            --primary-blue-accent: #4a90e2; /* Accent blue from image */
-            --text-color-dark: #333333; /* Dark text for headings */
-            --text-color-light: #888888; /* Lighter text for descriptions/small */
-            
-            /* -- NEW: Soft shadows inspired by the image -- */
-            --card-shadow: 0 10px 30px rgba(44, 62, 80, 0.12);
-            --card-hover-shadow: 0 15px 40px rgba(44, 62, 80, 0.18);
-            --nav-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08); /* Soft shadow from bottom */
-            
-            /* -- Nav colors -- */
-            --nav-bg: #ffffff;
-            --nav-item-color: #929292;
-            --nav-active-color: var(--primary-blue-dark); /* Using dark blue for active nav item */
-        }
-        /* --- END: CSS Variables --- */
-
-        * {
-            font-family: 'Tajawal', sans-serif;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--main-bg-color);
-            color: var(--text-color-dark);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* --- NEW: Header style inspired by "Hi Jenifer!" --- */
-        .page-header {
-            padding: 40px 20px 20px;
-            text-align: right;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .page-header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--primary-blue-dark);
-        }
-
-        .page-header p {
-            font-size: 16px;
-            color: var(--text-color-light);
-            font-weight: 500;
-        }
-        /* --- END: Header Style --- */
-
-        .main-content-wrapper {
-            flex-grow: 1;
-            padding-bottom: 90px; /* Space for the fixed nav */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .stats {
-            padding: 0 20px 25px; /* Adjusted padding */
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Forcing 2 columns like the image */
-            gap: 20px;
-            animation: fadeIn 1.2s ease-in-out forwards;
-        }
-        
-        /* --- NEW: Card style with soft shadows --- */
-        .card {
-            background: var(--card-bg-color);
-            border-radius: 20px; /* Softer radius */
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none; /* Removed the 1px black border */
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--card-hover-shadow);
-        }
-        /* --- END: Card Style --- */
-
-        /* -- NEW: Icon inside the card -- */
-        .card .card-icon {
-            font-size: 22px;
-            color: var(--primary-blue-accent);
-            background-color: #e6f0ff;
-            height: 45px;
-            width: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 5px;
-        }
-
-        .card h3 {
-            font-size: 16px; /* Adjusted size */
-            margin-bottom: 4px; /* Adjusted margin */
-            color: var(--text-color-dark);
-            font-weight: 700; /* Bolder title */
-        }
-
-        .card p {
-            font-size: 30px; /* Slightly smaller number */
-            font-weight: 700;
-            color: var(--primary-blue-dark);
-            margin-bottom: 2px;
-        }
-
-        .card small {
-            display: block;
-            margin-top: 0;
-            font-size: 12px;
-            color: var(--text-color-light);
-        }
-
-        /* --- NEW: Navigation Bar Style --- */
-        nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--nav-bg);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: var(--nav-shadow);
-            z-index: 1000;
-            height: 85px; /* Adjusted height */
-            border-top-left-radius: 30px; /* Smoother curve */
-            border-top-right-radius: 30px;
-            padding: 0 10px;
-        }
-
-        nav a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            height: 100%;
-            color: var(--nav-item-color);
-            text-decoration: none;
-            font-size: 12px; /* Cleaner font size */
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            gap: 5px;
-            padding-top: 10px; /* Space for the text */
-        }
-
-        nav a i {
-            font-size: 22px; /* Slightly smaller icons */
-            transition: color 0.3s ease;
-            margin-bottom: 2px;
-        }
-        
-        /* -- NEW: Simplified active nav item style -- */
-        nav a.active {
-            color: var(--nav-active-color);
-            font-weight: 700;
-        }
-        
-        /* Adding a dot indicator for active link, inspired by modern UIs */
-        nav a.active::after {
-            content: '';
-            position: absolute;
-            bottom: 10px;
-            height: 5px;
-            width: 5px;
-            background-color: var(--nav-active-color);
-            border-radius: 50%;
-        }
-
-        nav a:not(.active):hover {
-            color: var(--primary-blue-accent);
-        }
-        /* --- END: Navigation Bar Style --- */
-
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 360px) {
-            .stats {
-                gap: 15px;
-            }
-            .card {
-                padding: 15px;
-                border-radius: 15px;
-            }
-            .card h3 {
-                font-size: 14px;
-            }
-            .card p {
-                font-size: 26px;
-            }
-            .card .card-icon {
-                height: 40px;
-                width: 40px;
-                font-size: 20px;
-            }
-            nav {
-                height: 75px;
-            }
-            nav a {
-                font-size: 11px;
-            }
-            nav a i {
-                font-size: 20px;
-            }
-        }
-    </style>
 </head>
 <body>
-
     <div class="main-content-wrapper">
         <header class="page-header">
-            <h1 id="greeting">مرحباً بعودتك!</h1>
-            <p id="clinicName">لوحة تحكم عيادة الحياة</p>
+            <h1>مرحباً بعودتك!</h1>
+            <p>لوحة تحكم عيادة الحياة</p>
         </header>
 
         <section class="stats">
-            <div class="card patients">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-users"></i></div>
                 <h3>إجمالي المرضى</h3>
                 <p id="totalPatientCount">0</p>
-                <small>في جميع الأوقات</small>
             </div>
-            <div class="card appointments">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
-                <h3>المواعيد النشطة</h3>
-                <p id="activeAppointmentCount">0</p>
-                <small>خلال الأسبوع الحالي</small>
+                <h3>مواعيد اليوم</h3>
+                <p id="todayAppointments">0</p>
             </div>
-            <div class="card completed">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-check-double"></i></div>
-                <h3>الحجوزات المكتملة</h3>
+                <h3>مكتملة هذا الشهر</h3>
                 <p id="completedAppointments">0</p>
-                <small>لهذا الشهر</small>
             </div>
-            <div class="card doctors">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-user-md"></i></div>
                 <h3>عدد الأطباء</h3>
                 <p id="doctorsCount">0</p>
-                <small>المتاحون حالياً</small>
             </div>
-            <div class="card pending">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-hourglass-half"></i></div>
                 <h3>مواعيد معلقة</h3>
                 <p id="pendingAppointments">0</p>
-                <small>بانتظار التأكيد</small>
             </div>
-            <div class="card revenue">
+            <div class="card">
                 <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
-                <h3>إجمالي الإيرادات</h3>
+                <h3>إيرادات الشهر</h3>
                 <p id="totalRevenue">0</p>
-                <small>لهذا الشهر ($)</small>
             </div>
         </section>
     </div>
 
     <nav>
-        <a href="index.html" class="active">
-            <i class="fas fa-home"></i> الرئيسية
-        </a>
-        <a href="new-patient.html">
-            <i class="fas fa-user-plus"></i> مريض جديد
-        </a>
-        <a href="patients.html">
-            <i class="fas fa-users"></i> المرضى
-        </a>
-        <a href="appointments.html">
-            <i class="far fa-calendar-alt"></i> المواعيد
-        </a>
-        <a href="settings.html">
-            <i class="fas fa-cog"></i> الإعدادات
-        </a>
+        <a href="index.html" class="active"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="add-patient.html"><i class="fas fa-user-plus"></i> إضافة مريض</a>
+        <a href="#"><i class="fas fa-users"></i> المرضى</a>
+        <a href="doctors.html"><i class="fas fa-user-md"></i> الأطباء</a>
+        <a href="#"><i class="fas fa-cog"></i> الإعدادات</a>
     </nav>
 
     <script>
-        const supabaseUrl = 'https://dxzgiesmjorrhnnaxsoe.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4emdpZXNtam9ycmhubmF4c29lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMzU2MDUsImV4cCI6MjA2ODkxMTYwNX0.rAirfLN0FLNrZyjMyUIDS892EYIfSue2RXFEpIdBUfE';
+        const supabaseUrl = 'YOUR_SUPABASE_URL'; // ❗ استبدل برابط سوبابيز الخاص بك
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // ❗ استبدل بمفتاح سوبابيز الخاص بك
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // REMOVED: The loadClinicName function is no longer needed as the header is static.
-        // You can re-implement it to target the new <p id="clinicName"> if you wish.
-
         async function loadStats() {
+            // --- Date Calculations ---
             const now = new Date();
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+            const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-            const dayOfWeek = now.getDay();
-            const diffToSunday = now.getDate() - dayOfWeek;
-            const startOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday).toISOString();
-            const endOfWeek = new Date(now.getFullYear(), now.getMonth(), diffToSunday + 6, 23, 59, 59).toISOString();
+            // --- Fetching Data ---
+            const { count: patientCount } = await supabase.from('patients').select('*', { count: 'exact', head: true });
+            const { count: doctorCount } = await supabase.from('doctors').select('*', { count: 'exact', head: true });
+            const { count: pendingCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'مؤكدة');
+            const { count: todayCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).gte('appointment_date', todayStart).lte('appointment_date', todayEnd);
+            const { count: completedCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'مكتملة').gte('appointment_date', monthStart);
+            
+            // Note: Revenue calculation requires a 'transactions' table with an 'amount' column.
+            const { data: revenueData } = await supabase.from('transactions').select('amount').gte('created_at', monthStart);
+            const totalRevenue = revenueData ? revenueData.reduce((sum, transaction) => sum + transaction.amount, 0) : 0;
 
-            // Fetching stats from Supabase
-            const { data: totalPatients, error: totalPatientsError } = await supabase.from('patients').select('id', { count: 'exact' });
-            if (totalPatientsError) console.error('Error fetching total patients:', totalPatientsError.message);
-
-            const { data: activeAppointments, error: activeAppointmentsError } = await supabase.from('appointments').select('id', { count: 'exact' })
-                .gte('appointment_date', startOfWeek)
-                .lte('appointment_date', endOfWeek)
-                .in('status', ['مؤكدة', 'قيد الانتظار']);
-            if (activeAppointmentsError) console.error('Error fetching active appointments:', activeAppointmentsError.message);
-
-            const { data: completedAppointments, error: completedAppointmentsError } = await supabase.from('appointments').select('id', { count: 'exact' })
-                .eq('status', 'مكتملة')
-                .gte('appointment_date', startOfMonth)
-                .lte('appointment_date', endOfMonth);
-            if (completedAppointmentsError) console.error('Error fetching completed appointments:', completedAppointmentsError.message);
-
-            const { data: pendingAppointments, error: pendingAppointmentsError } = await supabase.from('appointments').select('id', { count: 'exact' }).eq('status', 'قيد الانتظار');
-            if (pendingAppointmentsError) console.error('Error fetching pending appointments:', pendingAppointmentsError.message);
-
-            const { data: doctors, error: doctorsError } = await supabase.from('doctors').select('id', { count: 'exact' });
-            if (doctorsError) console.error('Error fetching doctors:', doctorsError.message);
-
-            const { data: transactions, error: transactionsError } = await supabase.from('transactions').select('amount')
-                .gte('created_at', startOfMonth)
-                .lte('created_at', endOfMonth);
-            if (transactionsError) console.error('Error fetching transactions:', transactionsError.message);
-
-            let totalRevenue = 0;
-            if (transactions) {
-                totalRevenue = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
-            }
-
-            // Using .length for count for wider Supabase version compatibility
-            document.getElementById('totalPatientCount').textContent = totalPatients?.length || 0;
-            document.getElementById('activeAppointmentCount').textContent = activeAppointments?.length || 0;
-            document.getElementById('completedAppointments').textContent = completedAppointments?.length || 0;
-            document.getElementById('pendingAppointments').textContent = pendingAppointments?.length || 0;
-            document.getElementById('doctorsCount').textContent = doctors?.length || 0;
-            document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(0); // Using toFixed(0) for cleaner look
+            // --- Updating UI ---
+            document.getElementById('totalPatientCount').textContent = patientCount || 0;
+            document.getElementById('doctorsCount').textContent = doctorCount || 0;
+            document.getElementById('pendingAppointments').textContent = pendingCount || 0;
+            document.getElementById('todayAppointments').textContent = todayCount || 0;
+            document.getElementById('completedAppointments').textContent = completedCount || 0;
+            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(0)}`;
         }
 
-        // Call the function on load
-        loadStats();
+        document.addEventListener('DOMContentLoaded', loadStats);
     </script>
 </body>
 </html>
