@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الرئيسية - عيادتي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
@@ -24,7 +24,7 @@
         }
 
         * {
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Tajawal', sans-serif; /* Changed font family to Tajawal */
             box-sizing: border-box;
             margin: 0;
             padding: 0;
@@ -34,6 +34,7 @@
             background-color: var(--main-bg-color); /* Apply main background color */
             color: var(--text-color-dark);
             padding-bottom: 100px; /* Space for fixed nav */
+            padding-top: 90px; /* Reduced padding-top to accommodate smaller header */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -42,9 +43,9 @@
         header {
             background: linear-gradient(135deg, var(--primary-gradient-start), var(--primary-gradient-end)); /* Softer blue gradient */
             color: white;
-            padding: 45px 20px 35px; /* More vertical padding for a modern feel */
+            padding: 25px 20px; /* Further reduced vertical padding for smaller header */
             text-align: center;
-            font-size: 28px; /* Slightly larger for prominence */
+            font-size: 22px; /* Slightly smaller font for more compact header */
             font-weight: 700;
             box-shadow: 0 8px 25px var(--shadow-color-medium); /* More prominent, soft shadow */
             border-bottom-left-radius: 35px; /* Larger radius for header */
@@ -58,7 +59,7 @@
         }
 
         .stats {
-            margin-top: 30px; /* Space below header */
+            margin-top: 25px; /* Adjusted margin-top for content below smaller header */
             padding: 0 20px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -69,6 +70,8 @@
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
+            /* Ensure no internal scroll for the stats section itself */
+            overflow: hidden; /* Prevents overflow that might cause scrollbars */
         }
 
         .card {
@@ -79,16 +82,13 @@
             box-shadow: 0 12px 30px var(--shadow-color-soft); /* Soft, spread-out shadow */
             transition: transform 0.4s ease, box-shadow 0.4s ease;
             border: 1px solid var(--border-color-subtle); /* Subtle border */
+            /* Ensure no internal scroll for the cards */
+            overflow: hidden; /* Prevents internal scrolling */
+            display: flex; /* Use flexbox for vertical centering if content varies */
+            flex-direction: column;
+            justify-content: space-between; /* Distribute space if content is short */
+            height: 100%; /* Ensure cards take up full height in their grid cell */
         }
-
-        /* Specific card styles with subtle internal gradients if desired, similar to image */
-        .card.patients { /* Example, can apply a very subtle internal gradient */ }
-        .card.appointments { /* Example */ }
-        .card.completed { /* Example */ }
-        .card.doctors { /* Example */ }
-        .card.pending { /* Example */ }
-        .card.revenue { /* Example */ }
-
 
         .card:hover {
             transform: translateY(-10px); /* More pronounced lift on hover */
@@ -126,7 +126,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-top: none; /* No top border, rely on shadow */
+            border-top: none; /* Removed top border */
             box-shadow: 0 -8px 30px var(--shadow-color-soft); /* Soft shadow from bottom */
             z-index: 1000;
             height: 90px; /* Taller nav bar */
@@ -147,6 +147,8 @@
             font-size: 13px;
             transition: all 0.3s ease;
             position: relative;
+            /* Removed any explicit borders between nav items */
+            border: none;
         }
 
         nav a::after {
@@ -180,11 +182,6 @@
             transform: translateY(-3px); /* More pronounced lift */
         }
 
-        /* Adjustments for the middle '+' button if implemented - currently not in HTML */
-        /* If you want the '+' button in the middle, you'd add an `a` tag with a specific class
-           and style it separately within the nav. For this response, I'm keeping your
-           existing nav structure, but styling it to match. */
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -199,15 +196,17 @@
         @media (max-width: 600px) {
             body {
                 padding-bottom: 80px;
+                padding-top: 80px; /* Adjusted padding-top for smaller header on mobile */
             }
             header {
-                font-size: 24px;
-                padding: 35px 15px 25px;
+                font-size: 20px; /* Smaller font on mobile */
+                padding: 20px 15px; /* Reduced padding on mobile */
             }
             .stats {
                 grid-template-columns: 1fr 1fr;
                 gap: 20px;
                 padding: 0 15px;
+                margin-top: 20px;
             }
             .card {
                 padding: 25px;
@@ -241,7 +240,9 @@
     </style>
 </head>
 <body>
-    <header id="clinicName">مرحباً جينيفر!</header> <section class="stats">
+    <header id="clinicName">مرحباً جينيفر!</header>
+
+    <section class="stats">
         <div class="card patients">
             <h3>إجمالي المرضى</h3>
             <p id="totalPatientCount">0</p>
