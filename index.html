@@ -4,19 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الرئيسية - عيادتي</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <div class="main-content-wrapper">
         <header class="page-header">
-            <h1>مرحباً بعودتك!</h1>
-            <p>لوحة تحكم عيادة الحياة</p>
+            <h1>لوحة التحكم</h1>
+            <p>نظرة عامة على أداء العيادة</p>
         </header>
 
         <section class="stats">
@@ -26,7 +23,7 @@
                 <p id="totalPatientCount">0</p>
             </div>
             <div class="card">
-                <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="card-icon"><i class="fas fa-calendar-day"></i></div>
                 <h3>مواعيد اليوم</h3>
                 <p id="todayAppointments">0</p>
             </div>
@@ -34,16 +31,6 @@
                 <div class="card-icon"><i class="fas fa-check-double"></i></div>
                 <h3>مكتملة هذا الشهر</h3>
                 <p id="completedAppointments">0</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i class="fas fa-user-md"></i></div>
-                <h3>عدد الأطباء</h3>
-                <p id="doctorsCount">0</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i class="fas fa-hourglass-half"></i></div>
-                <h3>مواعيد معلقة</h3>
-                <p id="pendingAppointments">0</p>
             </div>
             <div class="card">
                 <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
@@ -54,43 +41,34 @@
     </div>
 
     <nav>
-        <a href="index.html" class="active"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="add-patient.html"><i class="fas fa-user-plus"></i> إضافة مريض</a>
-        <a href="#"><i class="fas fa-users"></i> المرضى</a>
-        <a href="doctors.html"><i class="fas fa-user-md"></i> الأطباء</a>
-        <a href="#"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="index.html" class="active"><i class="fas fa-home"></i> <span>الرئيسية</span></a>
+        <a href="patient-booking.html"><i class="fas fa-user-plus"></i> <span>إضافة وحجز</span></a>
+        <a href="#"><i class="fas fa-cog"></i> <span>الإعدادات</span></a>
     </nav>
 
     <script>
-        const supabaseUrl = 'YOUR_SUPABASE_URL'; // ❗ استبدل برابط سوبابيز الخاص بك
-        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // ❗ استبدل بمفتاح سوبابيز الخاص بك
+        const supabaseUrl = 'YOUR_SUPABASE_URL'; // ❗ استبدل
+        const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // ❗ استبدل
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         async function loadStats() {
-            // --- Date Calculations ---
             const now = new Date();
             const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
             const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
             const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-            // --- Fetching Data ---
             const { count: patientCount } = await supabase.from('patients').select('*', { count: 'exact', head: true });
-            const { count: doctorCount } = await supabase.from('doctors').select('*', { count: 'exact', head: true });
-            const { count: pendingCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'مؤكدة');
             const { count: todayCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).gte('appointment_date', todayStart).lte('appointment_date', todayEnd);
             const { count: completedCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'مكتملة').gte('appointment_date', monthStart);
             
-            // Note: Revenue calculation requires a 'transactions' table with an 'amount' column.
-            const { data: revenueData } = await supabase.from('transactions').select('amount').gte('created_at', monthStart);
-            const totalRevenue = revenueData ? revenueData.reduce((sum, transaction) => sum + transaction.amount, 0) : 0;
+            // Requires a 'transactions' table with an 'amount' column
+            // const { data: revenueData } = await supabase.from('transactions').select('amount').gte('created_at', monthStart);
+            // const totalRevenue = revenueData ? revenueData.reduce((sum, t) => sum + t.amount, 0) : 0;
 
-            // --- Updating UI ---
             document.getElementById('totalPatientCount').textContent = patientCount || 0;
-            document.getElementById('doctorsCount').textContent = doctorCount || 0;
-            document.getElementById('pendingAppointments').textContent = pendingCount || 0;
             document.getElementById('todayAppointments').textContent = todayCount || 0;
             document.getElementById('completedAppointments').textContent = completedCount || 0;
-            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(0)}`;
+            // document.getElementById('totalRevenue').textContent = `${totalRevenue.toFixed(0)}`;
         }
 
         document.addEventListener('DOMContentLoaded', loadStats);
