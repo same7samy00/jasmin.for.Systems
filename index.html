@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الرئيسية - عيادتي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -12,30 +11,20 @@
 <body>
     <div class="main-content-wrapper">
         <header class="page-header">
-            <h1>لوحة التحكم</h1>
-            <p>نظرة عامة على أداء العيادة</p>
+            <h1>لوحة المتابعة</h1>
+            <p>أداء العيادة لهذا اليوم: <strong><span id="currentDate"></span></strong></p>
         </header>
 
         <section class="stats">
-            <div class="card">
-                <div class="card-icon"><i class="fas fa-users"></i></div>
-                <h3>إجمالي المرضى</h3>
-                <p id="totalPatientCount">0</p>
-            </div>
             <div class="card">
                 <div class="card-icon"><i class="fas fa-calendar-day"></i></div>
                 <h3>مواعيد اليوم</h3>
                 <p id="todayAppointments">0</p>
             </div>
             <div class="card">
-                <div class="card-icon"><i class="fas fa-check-double"></i></div>
-                <h3>مكتملة هذا الشهر</h3>
-                <p id="completedAppointments">0</p>
-            </div>
-            <div class="card">
-                <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
-                <h3>إيرادات الشهر</h3>
-                <p id="totalRevenue">0</p>
+                <div class="card-icon"><i class="fas fa-arrow-up" style="color: #2ecc71;"></i></div>
+                <h3>دخل اليوم</h3>
+                <p id="todayIncome">0</p>
             </div>
         </section>
     </div>
@@ -45,33 +34,24 @@
         <a href="patient-booking.html"><i class="fas fa-user-plus"></i> <span>إضافة وحجز</span></a>
         <a href="#"><i class="fas fa-cog"></i> <span>الإعدادات</span></a>
     </nav>
-
     <script>
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         const supabaseUrl = 'YOUR_SUPABASE_URL'; // ❗ استبدل
         const supabaseKey = 'YOUR_SUPABASE_ANON_KEY'; // ❗ استبدل
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        async function loadStats() {
-            const now = new Date();
-            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-            const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
-            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+        async function loadDashboard() {
+            const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD format
 
-            const { count: patientCount } = await supabase.from('patients').select('*', { count: 'exact', head: true });
-            const { count: todayCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).gte('appointment_date', todayStart).lte('appointment_date', todayEnd);
-            const { count: completedCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'مكتملة').gte('appointment_date', monthStart);
+            const { count: appointmentsCount } = await supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('appointment_date', today);
+            const { data: incomeData } = await supabase.from('transactions').select('amount').eq('transaction_date', today).eq('type', 'Income');
             
-            // Requires a 'transactions' table with an 'amount' column
-            // const { data: revenueData } = await supabase.from('transactions').select('amount').gte('created_at', monthStart);
-            // const totalRevenue = revenueData ? revenueData.reduce((sum, t) => sum + t.amount, 0) : 0;
+            const totalIncome = incomeData ? incomeData.reduce((sum, t) => sum + t.amount, 0) : 0;
 
-            document.getElementById('totalPatientCount').textContent = patientCount || 0;
-            document.getElementById('todayAppointments').textContent = todayCount || 0;
-            document.getElementById('completedAppointments').textContent = completedCount || 0;
-            // document.getElementById('totalRevenue').textContent = `${totalRevenue.toFixed(0)}`;
+            document.getElementById('todayAppointments').textContent = appointmentsCount || 0;
+            document.getElementById('todayIncome').textContent = ` ${totalIncome.toFixed(0)}`;
         }
-
-        document.addEventListener('DOMContentLoaded', loadStats);
+        document.addEventListener('DOMContentLoaded', loadDashboard);
     </script>
 </body>
 </html>
